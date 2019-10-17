@@ -8,6 +8,8 @@
 Noti is your little companion living in your mac menu, relaying any notifications you get on your Android phone with [Pushbullet installed on it](https://pushbullet.com)!  
 **Noti does one thing, and it does it really well: notifications.**
 
+### What did i change
+I added a "disable Notification" toggle to the menu, so notifications can be temporary disabled by the user
 ## Download
 
 ### DMG
