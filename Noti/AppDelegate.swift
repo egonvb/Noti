@@ -79,5 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         log.info("Going to terminate Noti.")
     }
     
-    
+    func toggleNotificationDisplay(){
+        pushManager?.toggleShowNotifications()
+    }
 }

@@ -12,8 +12,11 @@ import ImageIO
 
 class StatusMenuController: NSObject, NSUserNotificationCenterDelegate {
     let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+    
     @IBOutlet weak var menu: NSMenu!
     @IBOutlet weak var menuItem: NSMenuItem!
+    @IBOutlet weak var showNotificationsMenuItem: NSMenuItem!
+    
     var appDelegate: AppDelegate?;
     
     override func awakeFromNib() {
@@ -41,6 +44,10 @@ class StatusMenuController: NSObject, NSUserNotificationCenterDelegate {
             if let disabled = info["disabled"] as? Bool {
                 statusItem.button?.image = NSImage(named: NSImage.Name(rawValue: disabled ? "StatusBarButtonImageFail" : "StatusBarButtonImage"))
                 statusItem.button?.appearsDisabled = disabled
+            }
+            
+            if let showNotifications = info["showNotifications"] as? Bool {
+                showNotificationsMenuItem.state = showNotifications ? NSControl.StateValue.off :  NSControl.StateValue.on
             }
             
             if let image = info["image"] as? NSImage {
@@ -76,5 +83,9 @@ class StatusMenuController: NSObject, NSUserNotificationCenterDelegate {
     
     @IBAction func quit(_ sender: AnyObject?) {
         NSApplication.shared.terminate(self)
+    }
+    
+    @IBAction func disableNotifications(_ sender: AnyObject?){
+        appDelegate!.toggleNotificationDisplay()
     }
 }

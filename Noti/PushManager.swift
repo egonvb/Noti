@@ -25,7 +25,9 @@ class PushManager: NSObject, WebSocketDelegate, NSUserNotificationCenterDelegate
     var killed = false
     let userDefaults = UserDefaults.standard
     var userState: String
+    var userImage: NSImage?
     var nopTimer : Timer
+    var showNotifications = Bool(true)
     
     init(token: String) {
         self.token = token
@@ -79,8 +81,9 @@ class PushManager: NSObject, WebSocketDelegate, NSUserNotificationCenterDelegate
         self.ephemerals.crypt = self.crypt
     }
     
-    func setState(_ state: String, image: NSImage? = nil, disabled: Bool? = nil) {
+    func setState(_ state: String, image: NSImage? = nil, disabled: Bool? = nil, showNotifications:Bool? = nil) {
         userState = state
+        userImage = image
         var object:[String: AnyObject] = [
             "title": state as AnyObject
         ]
@@ -89,6 +92,9 @@ class PushManager: NSObject, WebSocketDelegate, NSUserNotificationCenterDelegate
         }
         if disabled != nil {
             object["disabled"] = disabled as AnyObject?
+        }
+        if showNotifications != nil {
+            object["showNotifications"] = showNotifications as AnyObject?
         }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "StateChange"), object: object)
     }
@@ -315,6 +321,11 @@ class PushManager: NSObject, WebSocketDelegate, NSUserNotificationCenterDelegate
     func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         print("PushManager", "receive", text)
         
+        if( !self.showNotifications ){
+            log.debug("Message received, notifications are disabled")
+            return
+        }
+        
         var message = JSON(parseJSON:text);
         
         if let type = message["type"].string {
@@ -535,5 +546,10 @@ class PushManager: NSObject, WebSocketDelegate, NSUserNotificationCenterDelegate
     
     func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
         
+    }
+    
+    func toggleShowNotifications(){
+        self.showNotifications = !self.showNotifications
+        self.setState( self.userState, image: userImage , showNotifications : self.showNotifications)
     }
 }
